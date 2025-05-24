@@ -1,21 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Loader from '../components/Loarder';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTodos } from '../store/Todos/todosSlice';
 
 const Todos = () => {
-  const [todos, setTodos] = useState(null);
-
-  const getTodos = async () => {
-    try {
-      let response = await fetch('https://jsonplaceholder.typicode.com/todos');
-      let data = await response.json();
-      setTodos(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const dispatch = useDispatch()
+  const { todos } = useSelector((store) => store.todos)
 
   useEffect(() => {
-    getTodos();
+    dispatch(getTodos())
   }, []);
 
   return (

@@ -1,44 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect} from 'react';
+import { useParams} from 'react-router-dom';
 import Loader from '../components/Loarder';
+import Loarder from '../components/Loarder';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPostsItem } from '../store/PostsItem/postsItemSlices';
 
 const PostsItem = () => {
-  const [post, setPost] = useState(null);
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const { postsItem } = useSelector((state) => state.postsItem)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    const getPostById = async () => {
-      try {
-        let response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-        if (!response.ok) throw new Error('Post not found');
-        let data = await response.json();
-        if (!data || !data.id) throw new Error('Invalid post');
-        setPost(data);
-      } catch (error) {
-        navigate('/not-found', { replace: true });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getPostById();
-  }, [id, navigate]);
-
-  if (loading) return <Loader />;
+    dispatch(getPostsItem(id))
+  }, []);
 
   return (
     <div className="container-post">
       <h1>Post Item Page</h1>
-      {post ? (
+      {postsItem && postsItem.id == id ? (
         <div className='postItem'>
-          <h2>ID: {post.id}</h2>
-          <p className='postItem-text'>Title: {post.title}</p>
-          <p className='postItem-text'>Body: {post.body}</p>
+          <h2>ID: {postsItem.id}</h2>
+          <p className='postItem-text'>Title: {postsItem.title}</p>
+          <p className='postItem-text'>Body: {postsItem.body}</p>
         </div>
       ) : (
-        <p>Loading...</p>
+        <Loarder/>
       )}
     </div>
   );

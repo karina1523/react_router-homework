@@ -1,32 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Loader from '../components/Loarder';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPosts } from '../store/Posts/postsSlice';
 
 
 const Posts = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch()
+  const { posts } = useSelector((store) => store.posts)
 
-  const getPosts = async () => {
-    try {
-      let response = await fetch('https://jsonplaceholder.typicode.com/posts');
-      let data = await response.json();
-      setPosts(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    getPosts();
-  }, []);
+    dispatch(getPosts())
+  }, [])
+
 
   return (
     <div className="container">
       <h1>Posts</h1>
-      {loading ? (
+      {!posts ? (
         <Loader />
       ) : (
         <div className="posts__box">
